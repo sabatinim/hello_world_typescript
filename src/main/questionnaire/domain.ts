@@ -15,7 +15,6 @@ type TextQuestion = {
 type MoneyQuestion = {
   base: BaseFields
   kind: "MoneyQuestion"
-  format: string
 }
 
 type ListQuestion = {
@@ -32,7 +31,7 @@ export function create_text_question(id: string, text: string): TextQuestion {
 }
 
 export function create_money_question(id: string, text: string): MoneyQuestion {
-  return {base: {id: id, text: text}, kind: "MoneyQuestion", format: "@#@#$$@#"}
+  return {base: {id: id, text: text}, kind: "MoneyQuestion"}
 }
 
 export function create_list_question(id: string, text: string, sub_questions: BaseQuestion[]): ListQuestion {

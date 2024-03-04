@@ -2,7 +2,7 @@ import {parse_questions} from "./parser";
 import {Industry, Question} from "./domain";
 
 
-function get_questionnaire_by(industry: Industry){
+function in_memory_get_questionnaire_by(industry: Industry) {
   const json_from_back_end = [
     {
       "question_id": "waste_penalties",
@@ -16,17 +16,24 @@ function get_questionnaire_by(industry: Industry){
 
   let in_memory_storage = new Map<string, any>()
   in_memory_storage.set(Industry.Manufacturing, json_from_back_end)
-  return in_memory_storage.get(industry);
-}
+  const result = in_memory_storage.get(industry);
 
-export function load_questionnaire(industry: Industry): Promise<Question[]> {
   return new Promise((resolve, reject) => {
-    const to_parse = get_questionnaire_by(industry); // call API
-
-    to_parse ? resolve(parse_questions(to_parse)) : reject(`Questionnaire for ${industry} not exist`)
-  })
+    result ? resolve(result) : reject(`${industry} doesn't have questionnaire configured`)
+  });
 }
 
+type LoadQuestionnaire = (industry: Industry) => Promise<Question[]>
+type GetQuestionnaireBy = (industry: Industry) => Promise<any>;
+
+const configure_load_questionnaire = (get_questionnaire_by: GetQuestionnaireBy): LoadQuestionnaire =>
+  (industry: Industry) => new Promise((resolve, reject) => {
+    get_questionnaire_by(industry)
+      .then(json => {resolve(parse_questions(json))})
+      .catch(client_error => reject(`Load questionnaire error: ${client_error}`))
+  })
+
+export const load_questionnaire = configure_load_questionnaire(in_memory_get_questionnaire_by)
 
 export function print_question(q: Question): string {
   switch (q.kind) {

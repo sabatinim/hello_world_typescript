@@ -96,13 +96,11 @@ describe('Questionnaire tests', function () {
     }).toThrow(Error("Unhandled kind unknown"))
   });
 
-
   it('Load Questionnaire', async () => {
     let result = await load_questionnaire(Industry.Manufacturing)
 
     let expected = [
-      "(MoneyQuestion, id=ccc, text=ddd)",
-      "(ListQuestion, id=aaa, text=bbb, sub_questions=[(MoneyQuestion, id=aaa, text=bbb),(TextQuestion, id=aaa, text=bbb)])"
+      "(ListQuestion, id=waste_penalties, text=Bla Bla, sub_questions=[(TextQuestion, id=penalty_name, text=Bla),(MoneyQuestion, id=cost_per_hour, text=Bla )])"
     ]
     let to_string = result.map((q) => print_question(q))
     expect(to_string).toEqual(expected)
@@ -110,7 +108,7 @@ describe('Questionnaire tests', function () {
 
   it('Questionnaire not exist', async () => {
     load_questionnaire(Industry.Other).catch((msg) => {
-      expect(msg).toEqual("Questionnaire for OTHER not exist")
+      expect(msg).toEqual("Load questionnaire error: OTHER doesn't have questionnaire configured")
     })
   });
 })
