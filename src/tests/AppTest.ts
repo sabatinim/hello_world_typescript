@@ -94,7 +94,6 @@ describe('Questionnaire tests', function () {
     expect(() => {
       parse_question({"kind": "unknown"})
     }).toThrow(Error("Unhandled kind unknown"))
-
   });
 
 
