@@ -2,29 +2,28 @@ export type BaseQuestion = TextQuestion | MoneyQuestion
 
 export type Question = BaseQuestion | ListQuestion
 
-type BaseFields = {
+type BaseQuestionFields = {
   id: string
   text: string
 }
 
 type TextQuestion = {
-  base: BaseFields
+  base: BaseQuestionFields
   kind: "TextQuestion"
 }
 
 type MoneyQuestion = {
-  base: BaseFields
+  base: BaseQuestionFields
   kind: "MoneyQuestion"
 }
 
 type ListQuestion = {
-  base: BaseFields
+  base: BaseQuestionFields
   kind: "ListQuestion"
   sub_questions: BaseQuestion[]
 }
 
 //Add additional question types
-
 
 export function create_text_question(id: string, text: string): TextQuestion {
   return {base: {id: id, text: text}, kind: "TextQuestion"}
@@ -44,3 +43,31 @@ export enum Industry {
 }
 
 
+export type Answer = NumericAnswer | TextAnswer
+
+type BaseAnswerFields = {
+  question_id: string
+  user: string
+  timestamp: number
+}
+
+type NumericAnswer = {
+  base: BaseAnswerFields
+  value: number
+  kind: "NumericAnswer"
+}
+
+type TextAnswer = {
+  base: BaseAnswerFields
+  value: string
+  kind: "TextAnswer"
+}
+
+
+export function create_numeric_answers(question_id: string, value: number, user: string, timestamp: number): NumericAnswer {
+  return {base: {question_id: question_id, user: user, timestamp: timestamp}, value: value, kind: "NumericAnswer"}
+}
+
+export function create_text_answers(question_id: string, value: string, user: string, timestamp: number): TextAnswer {
+  return {base: {question_id: question_id, user: user, timestamp: timestamp}, value: value, kind: "TextAnswer"}
+}

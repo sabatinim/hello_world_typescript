@@ -1,8 +1,8 @@
-import {parse_questions} from "./parser";
-import {Industry, Question} from "./domain";
+import {parse_answers, parse_questions} from "./parser";
+import {Answer, Industry, Question} from "./domain";
 
 
-function in_memory_get_questionnaire_by(industry: Industry) {
+function in_memory_get_questionnaire_by(industry: Industry): Promise<any> {
   const json_from_back_end = [
     {
       "question_id": "waste_penalties",
@@ -47,3 +47,31 @@ export function print_question(q: Question): string {
       return "Unknown"
   }
 }
+
+
+function in_memory_get_answers_by(tenant_id: string, facility_id: string): Promise<any> {
+  const json_from_back_end = [
+    {"question_id": "aaa", "kind": "text_answer", "text": "bbb", "value": "aaa", "user": "bbb", "timestamp": 123},
+    {"question_id": "aaa", "kind": "numeric_answer", "text": "bbb", "value": 456, "user": "bbb", "timestamp": 123}
+  ];
+
+  // let in_memory_storage = new Map<string, any>()
+  // in_memory_storage.set(Industry.Manufacturing, json_from_back_end)
+  // const result = in_memory_storage.get(industry);
+
+  return new Promise((resolve, reject) => {
+    resolve(json_from_back_end)
+  });
+}
+
+type LoadAnswers = (tenant_id: string, facility_id: string) => Promise<Answer[]>
+type GetAnswersBy = (tenant_id: string, facility_id: string) => Promise<any>;
+
+const configure_load_answers = (get_answers_by: GetAnswersBy): LoadAnswers =>
+  (tenant_id: string, facility_id: string) => new Promise((resolve, reject) => {
+    get_answers_by(tenant_id, facility_id)
+      .then(json => {resolve(parse_answers(json))})
+      .catch(client_error => reject(`Load questionnaire error: ${client_error}`))
+  })
+
+export const load_answers = configure_load_answers(in_memory_get_answers_by)
