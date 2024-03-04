@@ -5,7 +5,7 @@
   "scripts": {
     "test": "cd src/__test__ && jest --no-cache  --collect-coverage",
     "build": "tsc",
-    "start": "npm run build && node dist/source/main.js"
+    "start": "npm run build && node dist/main/app.js"
   },
   "dependencies": {},
   "devDependencies": {
