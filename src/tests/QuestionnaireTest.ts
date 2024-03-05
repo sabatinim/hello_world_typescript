@@ -6,8 +6,7 @@ import {load_questionnaire, print_question} from "../main/questionnaire/infrastr
 describe('Questionnaire tests', function () {
   it('Parse Text Question', () => {
 
-    const question_json =
-      {"question_id": "aaa", "kind": "text_question", "text": "bbb"};
+    const question_json = {"question_id": "aaa", "kind": "text_question", "text": "bbb"};
 
     const expected: Question = parse_question(question_json)
 
@@ -16,8 +15,7 @@ describe('Questionnaire tests', function () {
 
   it('Parse Money Question', () => {
 
-    const question_json =
-      {"question_id": "aaa", "text": "bbb", "kind": "money_question"};
+    const question_json = {"question_id": "aaa", "text": "bbb", "kind": "money_question"};
 
     const expected: Question = parse_question(question_json)
 
@@ -26,68 +24,38 @@ describe('Questionnaire tests', function () {
 
 
   it('Parse List Question with one money question as sub questions', () => {
-
-    const question_json =
-      {
-        "question_id": "aaa",
-        "kind": "list_question",
-        "text": "bbb",
-        "sub_questions": [{"question_id": "aaa", "kind": "money_question", "text": "bbb"}]
-      };
+    const question_json = {
+      "question_id": "aaa",
+      "kind": "list_question",
+      "text": "bbb",
+      "sub_questions": [{"question_id": "aaa", "kind": "money_question", "text": "bbb"}]
+    };
 
     const expected = parse_question(question_json)
 
-    expect(expected).toEqual(
-      {
-        "base": {
-          "id": "aaa",
-          "text": "bbb"
-        },
-        "kind": "ListQuestion",
-        "sub_questions": [{
-          "base": {
-            "id": "aaa",
-            "text": "bbb",
-          },
-          "kind": "MoneyQuestion"
-        }]
-      })
+    expect(expected).toEqual({
+                               "base": {"id": "aaa", "text": "bbb"},
+                               "kind": "ListQuestion",
+                               "sub_questions": [{"base": {"id": "aaa", "text": "bbb"}, "kind": "MoneyQuestion"}]
+                             })
   });
 
 
   it("Parse Questions", () => {
 
-    const questions =
-      [
-        {"question_id": "ccc", "text": "ddd", "kind": "money_question"},
-        {
-          "question_id": "aaa",
-          "kind": "list_question",
-          "text": "bbb",
-          "sub_questions": [{"question_id": "aaa", "kind": "money_question", "text": "bbb"}]
-        }]
+    const questions = [{"question_id": "ccc", "text": "ddd", "kind": "money_question"}, {
+      "question_id": "aaa",
+      "kind": "list_question",
+      "text": "bbb",
+      "sub_questions": [{"question_id": "aaa", "kind": "money_question", "text": "bbb"}]
+    }]
 
     let expected = parse_questions(questions)
-    expect(expected).toEqual(
-      [
-        {"base": {"id": "ccc", "text": "ddd"}, "kind": "MoneyQuestion"},
-        {
-          "base": {
-            "id": "aaa",
-            "text": "bbb"
-          },
-          "kind": "ListQuestion",
-          "sub_questions": [
-            {
-              "base": {
-                "id": "aaa",
-                "text": "bbb"
-              },
-              "kind": "MoneyQuestion"
-            }
-          ]
-        }
-      ])
+    expect(expected).toEqual([{"base": {"id": "ccc", "text": "ddd"}, "kind": "MoneyQuestion"}, {
+      "base": {"id": "aaa", "text": "bbb"},
+      "kind": "ListQuestion",
+      "sub_questions": [{"base": {"id": "aaa", "text": "bbb"}, "kind": "MoneyQuestion"}]
+    }])
   });
 
   it('Parse Question goes in error', () => {
@@ -99,9 +67,7 @@ describe('Questionnaire tests', function () {
   it('Load Questionnaire', async () => {
     let result = await load_questionnaire(Industry.Manufacturing)
 
-    let expected = [
-      "(ListQuestion, id=waste_penalties, text=Bla Bla, sub_questions=[(TextQuestion, id=penalty_name, text=Bla),(MoneyQuestion, id=cost_per_hour, text=Bla )])"
-    ]
+    let expected = ["(ListQuestion, id=waste_penalties, text=Bla Bla, sub_questions=[(TextQuestion, id=penalty_name, text=Bla),(MoneyQuestion, id=cost_per_hour, text=Bla )])"]
     let to_string = result.map((q) => print_question(q))
     expect(to_string).toEqual(expected)
   });
